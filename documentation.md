@@ -39,3 +39,9 @@ getTimestamp() // returns the current timestamp as a string in the format of "02
   - messages received from the server are printed along with timestamps
   - a goroutine is used to listen for incoming messages while the main thread handles user input
 - Tested locally with two clients connected to the same server to verify that messages are sent and received correctly, with usernames and timestamps shown as expected
+
+### {Abhineshhh} {#69 Add user prompt for messages}
+
+- Added "Enter Message > " prompt in client/chat.go message input loop
+- Fixed server/server.js: moved message handler inside username callback to prevent username broadcast as chat message
+- Fixed client/chat.go: implemented ANSI escape codes to reprint prompt after incoming messages for cleaner display

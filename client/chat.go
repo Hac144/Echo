@@ -3,12 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
 	"os"
-	"time"
 	"strings"
+	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 func connectToEchoServer(serverURL string, username string) error {
@@ -33,7 +34,7 @@ func connectToEchoServer(serverURL string, username string) error {
 	fmt.Println("Listening for messages from server...")
 
 	// Run a goroutine so incoming messages are received in background while user types
-	go func(){
+	go func() {
 		for {
 			messageType, data, err := c.ReadMessage()
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -48,16 +49,17 @@ func connectToEchoServer(serverURL string, username string) error {
 			if messageType == websocket.TextMessage {
 				timestamp := getTimestamp()
 				message := string(data)
-				fmt.Printf("[%s] Server -> Client: %s\n", timestamp, message)
+				fmt.Printf("\r%s[%s] Server -> Client: %s\nEnter Message : ", "\033[K", timestamp, message)
 			}
 		}
 	}()
 
 	// Read for terminal input
 	reader := bufio.NewReader(os.Stdin)
-	
+
 	// Infinite loop so that user can keep sending messages
 	for {
+		fmt.Print("Enter Message : ")
 		text, _ := reader.ReadString('\n')
 		text = strings.TrimSpace(text)
 		c.WriteMessage(websocket.TextMessage, []byte(text))

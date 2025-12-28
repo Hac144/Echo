@@ -36,22 +36,23 @@ wss.on("connection", (ws) => {
         client.send(`${username} has joined`);
       }
     });
-  });
 
-  // Handle all subsequent message as chat message
-  ws.on("message", (message) => {
-    const text = message.toString().trim();
-    const username = clients.get(ws);
-    const time = getTimestamp();
+    // NOW set up the message handler for subsequent messages
+    // This ensures username message is not processed twice
+    ws.on("message", (message) => {
+      const text = message.toString().trim();
+      const username = clients.get(ws);
+      const time = getTimestamp();
 
-    // Formatting message
-    const finalMessage = `${time}: ${username} said: ${text}`;
+      // Formatting message
+      const finalMessage = `${time}: ${username} said: ${text}`;
 
-    // Broadcasting to all connected clients
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(finalMessage);
-      }
+      // Broadcasting to all connected clients
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(finalMessage);
+        }
+      });
     });
   });
 
