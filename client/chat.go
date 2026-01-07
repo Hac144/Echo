@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -43,6 +42,25 @@ func connectToEchoServer(serverURL string, username string, password string) err
 	}
 	fmt.Printf("[%s] ✓ Authentication data sent for user: %s\n", getTimestamp(), username)
 	fmt.Println("-------------------------------------------")
+	fmt.Println("Waiting for authentication response...")
+
+	// Wait for authentication response
+	messageType, data, err := c.ReadMessage()
+	if err != nil {
+		return fmt.Errorf("[%s] ✗ Connection error: %v", getTimestamp(), err)
+	}
+
+	if messageType == websocket.TextMessage {
+		message := string(data)
+		if strings.HasPrefix(message, "ERROR:") {
+			fmt.Printf("\r%s%s\n", "\033[K", message)
+			return fmt.Errorf("Authentication failed: %s", message)
+		} else {
+			fmt.Printf("\r%s%s\n", "\033[K", message)
+			fmt.Printf("[%s] ✓ Authentication successful!\n", getTimestamp())
+		}
+	}
+
 	fmt.Println("Listening for messages from server...")
 
 	// Run a goroutine so incoming messages are received in background while user types
@@ -50,12 +68,13 @@ func connectToEchoServer(serverURL string, username string, password string) err
 		for {
 			messageType, data, err := c.ReadMessage()
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v", err)
-				log.Println(err)
+				fmt.Printf("\r%sConnection closed by server.\n", "\033[K")
+				os.Exit(1)
 				return
 			}
 			if err != nil {
-				fmt.Printf("error: %v\n", err)
+				fmt.Printf("\r%sConnection error: %v\n", "\033[K", err)
+				os.Exit(1)
 				break
 			}
 			if messageType == websocket.TextMessage {
