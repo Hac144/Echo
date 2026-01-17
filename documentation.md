@@ -104,7 +104,7 @@ getTimestamp() // returns the current timestamp as a string in the format of "02
 
 - Updated server/package.json:
 
-  - Added bcrypt dependency for secure password hashing.
+  - Added bcrypt dependency for password hashing.
 
 - Updated client/chat.go:
 
@@ -115,3 +115,25 @@ getTimestamp() // returns the current timestamp as a string in the format of "02
   - Added success message display for correct authentication.
 
 - Tested locally: Verified new user registration, existing user login, wrong password rejection, and proper error handling.
+
+### {Krishna200608} {#127 Ooh, Shiny! (Implementation ver.)}
+
+Built a complete TUI for Echo using Bubble Tea framework.
+
+**Files Created/Modified:**
+- `config.go` - reads theme colors from `theme.conf`
+- `styles.go` - styling logic using Lipgloss
+- `tui_model.go` - main TUI logic (login, chat screens)
+- `main.go` and `chat.go` - updated for TUI integration
+
+**Login Screen:** ASCII logo with gradient colors, input fields for server/username/password, show/hide password toggle, animated connect button with border effects.
+
+**Chat Screen:** Purple header with pulsing online indicator, scrollable message area, animated input border (fast for 10 sec, then slow).
+**Controls:** `Enter` to send, `Alt+Enter` for new line, `PageUp`/`PageDown` to scroll, `Ctrl+U` to clear input.
+**Dynamic Input:** Textarea auto-expands up to 5 lines.
+
+**Animations:** Gradient logo, pulsing dots, glowing input borders, progress bar on connecting screen, adaptive animation timing.
+
+**Theme:** Customizable via `theme.conf` with preset options (Cyberpunk, Forest, Ocean, Sunset).
+
+Tested locally - all features working.
